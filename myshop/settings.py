@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,11 +42,14 @@ INSTALLED_APPS = [
     "cart.apps.CartConfig",
     "orders.apps.OrdersConfig",
     "coupons.apps.CouponsConfig",
+    "rosetta",
+    "parler",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -102,8 +106,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
 
+LANGUAGES = (
+    ("en", _("English")),
+    ("hi", _("Hindi")),
+)
+LOCALE_PATHS = (os.path.join(BASE_DIR, "locale/"),)
 TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
@@ -125,3 +134,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 CART_SESSION_ID = "cart"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# for model translation
+PARLER_LANGUAGES = {
+    None: ({"code": "en"}, {"code": "hi"},),
+    "default": {"fallback": "en", "hide_untranslated": False,},
+}
+ALLOW_UNICODE_SLUGS = True
