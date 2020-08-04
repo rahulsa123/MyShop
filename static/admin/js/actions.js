@@ -1,34 +1,34 @@
 /*global gettext, interpolate, ngettext*/
-(function($) {
+(function(Rs ) {
     'use strict';
     var lastChecked;
 
-    $.fn.actions = function(opts) {
-        var options = $.extend({}, $.fn.actions.defaults, opts);
-        var actionCheckboxes = $(this);
+    Rs .fn.actions = function(opts) {
+        var options = Rs .extend({}, Rs .fn.actions.defaults, opts);
+        var actionCheckboxes = Rs (this);
         var list_editable_changed = false;
         var showQuestion = function() {
-                $(options.acrossClears).hide();
-                $(options.acrossQuestions).show();
-                $(options.allContainer).hide();
+                Rs (options.acrossClears).hide();
+                Rs (options.acrossQuestions).show();
+                Rs (options.allContainer).hide();
             },
             showClear = function() {
-                $(options.acrossClears).show();
-                $(options.acrossQuestions).hide();
-                $(options.actionContainer).toggleClass(options.selectedClass);
-                $(options.allContainer).show();
-                $(options.counterContainer).hide();
+                Rs (options.acrossClears).show();
+                Rs (options.acrossQuestions).hide();
+                Rs (options.actionContainer).toggleClass(options.selectedClass);
+                Rs (options.allContainer).show();
+                Rs (options.counterContainer).hide();
             },
             reset = function() {
-                $(options.acrossClears).hide();
-                $(options.acrossQuestions).hide();
-                $(options.allContainer).hide();
-                $(options.counterContainer).show();
+                Rs (options.acrossClears).hide();
+                Rs (options.acrossQuestions).hide();
+                Rs (options.allContainer).hide();
+                Rs (options.counterContainer).show();
             },
             clearAcross = function() {
                 reset();
-                $(options.acrossInput).val(0);
-                $(options.actionContainer).removeClass(options.selectedClass);
+                Rs (options.acrossInput).val(0);
+                Rs (options.actionContainer).removeClass(options.selectedClass);
             },
             checker = function(checked) {
                 if (checked) {
@@ -36,20 +36,20 @@
                 } else {
                     reset();
                 }
-                $(actionCheckboxes).prop("checked", checked)
+                Rs (actionCheckboxes).prop("checked", checked)
                     .parent().parent().toggleClass(options.selectedClass, checked);
             },
             updateCounter = function() {
-                var sel = $(actionCheckboxes).filter(":checked").length;
+                var sel = Rs (actionCheckboxes).filter(":checked").length;
                 // data-actions-icnt is defined in the generated HTML
                 // and contains the total amount of objects in the queryset
-                var actions_icnt = $('.action-counter').data('actionsIcnt');
-                $(options.counterContainer).html(interpolate(
+                var actions_icnt = Rs ('.action-counter').data('actionsIcnt');
+                Rs (options.counterContainer).html(interpolate(
                     ngettext('%(sel)s of %(cnt)s selected', '%(sel)s of %(cnt)s selected', sel), {
                         sel: sel,
                         cnt: actions_icnt
                     }, true));
-                $(options.allToggle).prop("checked", function() {
+                Rs (options.allToggle).prop("checked", function() {
                     var value;
                     if (sel === actionCheckboxes.length) {
                         value = true;
@@ -62,65 +62,65 @@
                 });
             };
         // Show counter by default
-        $(options.counterContainer).show();
+        Rs (options.counterContainer).show();
         // Check state of checkboxes and reinit state if needed
-        $(this).filter(":checked").each(function(i) {
-            $(this).parent().parent().toggleClass(options.selectedClass);
+        Rs (this).filter(":checked").each(function(i) {
+            Rs (this).parent().parent().toggleClass(options.selectedClass);
             updateCounter();
-            if ($(options.acrossInput).val() === 1) {
+            if (Rs (options.acrossInput).val() === 1) {
                 showClear();
             }
         });
-        $(options.allToggle).show().on('click', function() {
-            checker($(this).prop("checked"));
+        Rs (options.allToggle).show().on('click', function() {
+            checker(Rs (this).prop("checked"));
             updateCounter();
         });
-        $("a", options.acrossQuestions).on('click', function(event) {
+        Rs ("a", options.acrossQuestions).on('click', function(event) {
             event.preventDefault();
-            $(options.acrossInput).val(1);
+            Rs (options.acrossInput).val(1);
             showClear();
         });
-        $("a", options.acrossClears).on('click', function(event) {
+        Rs ("a", options.acrossClears).on('click', function(event) {
             event.preventDefault();
-            $(options.allToggle).prop("checked", false);
+            Rs (options.allToggle).prop("checked", false);
             clearAcross();
             checker(0);
             updateCounter();
         });
         lastChecked = null;
-        $(actionCheckboxes).on('click', function(event) {
+        Rs (actionCheckboxes).on('click', function(event) {
             if (!event) { event = window.event; }
             var target = event.target ? event.target : event.srcElement;
-            if (lastChecked && $.data(lastChecked) !== $.data(target) && event.shiftKey === true) {
+            if (lastChecked && Rs .data(lastChecked) !== Rs .data(target) && event.shiftKey === true) {
                 var inrange = false;
-                $(lastChecked).prop("checked", target.checked)
+                Rs (lastChecked).prop("checked", target.checked)
                     .parent().parent().toggleClass(options.selectedClass, target.checked);
-                $(actionCheckboxes).each(function() {
-                    if ($.data(this) === $.data(lastChecked) || $.data(this) === $.data(target)) {
+                Rs (actionCheckboxes).each(function() {
+                    if (Rs .data(this) === Rs .data(lastChecked) || Rs .data(this) === Rs .data(target)) {
                         inrange = (inrange) ? false : true;
                     }
                     if (inrange) {
-                        $(this).prop("checked", target.checked)
+                        Rs (this).prop("checked", target.checked)
                             .parent().parent().toggleClass(options.selectedClass, target.checked);
                     }
                 });
             }
-            $(target).parent().parent().toggleClass(options.selectedClass, target.checked);
+            Rs (target).parent().parent().toggleClass(options.selectedClass, target.checked);
             lastChecked = target;
             updateCounter();
         });
-        $('form#changelist-form table#result_list tr').on('change', 'td:gt(0) :input', function() {
+        Rs ('form#changelist-form table#result_list tr').on('change', 'td:gt(0) :input', function() {
             list_editable_changed = true;
         });
-        $('form#changelist-form button[name="index"]').on('click', function(event) {
+        Rs ('form#changelist-form button[name="index"]').on('click', function(event) {
             if (list_editable_changed) {
                 return confirm(gettext("You have unsaved changes on individual editable fields. If you run an action, your unsaved changes will be lost."));
             }
         });
-        $('form#changelist-form input[name="_save"]').on('click', function(event) {
+        Rs ('form#changelist-form input[name="_save"]').on('click', function(event) {
             var action_changed = false;
-            $('select option:selected', options.actionContainer).each(function() {
-                if ($(this).val()) {
+            Rs ('select option:selected', options.actionContainer).each(function() {
+                if (Rs (this).val()) {
                     action_changed = true;
                 }
             });
@@ -134,7 +134,7 @@
         });
     };
     /* Setup plugin defaults */
-    $.fn.actions.defaults = {
+    Rs .fn.actions.defaults = {
         actionContainer: "div.actions",
         counterContainer: "span.action-counter",
         allContainer: "div.actions span.all",
@@ -144,10 +144,10 @@
         allToggle: "#action-toggle",
         selectedClass: "selected"
     };
-    $(document).ready(function() {
-        var $actionsEls = $('tr input.action-select');
-        if ($actionsEls.length > 0) {
-            $actionsEls.actions();
+    Rs (document).ready(function() {
+        var Rs actionsEls = Rs ('tr input.action-select');
+        if (Rs actionsEls.length > 0) {
+            Rs actionsEls.actions();
         }
     });
 })(django.jQuery);

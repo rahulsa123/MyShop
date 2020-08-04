@@ -4,7 +4,7 @@ SelectFilter2 - Turns a multiple-select box into a filter interface.
 
 Requires jQuery, core.js, and SelectBox.js.
 */
-(function($) {
+(function(Rs ) {
     'use strict';
     function findForm(node) {
         // returns the node of the form containing the given node
@@ -164,9 +164,9 @@ Requires jQuery, core.js, and SelectBox.js.
 
             if (!is_stacked) {
                 // In horizontal mode, give the same height to the two boxes.
-                var j_from_box = $('#' + field_id + '_from');
-                var j_to_box = $('#' + field_id + '_to');
-                j_to_box.height($(filter_p).outerHeight() + j_from_box.outerHeight());
+                var j_from_box = Rs ('#' + field_id + '_from');
+                var j_to_box = Rs ('#' + field_id + '_to');
+                j_to_box.height(Rs (filter_p).outerHeight() + j_from_box.outerHeight());
             }
 
             // Initial icon refresh
@@ -187,14 +187,14 @@ Requires jQuery, core.js, and SelectBox.js.
             return any_selected;
         },
         refresh_icons: function(field_id) {
-            var from = $('#' + field_id + '_from');
-            var to = $('#' + field_id + '_to');
+            var from = Rs ('#' + field_id + '_from');
+            var to = Rs ('#' + field_id + '_to');
             // Active if at least one item is selected
-            $('#' + field_id + '_add_link').toggleClass('active', SelectFilter.any_selected(from));
-            $('#' + field_id + '_remove_link').toggleClass('active', SelectFilter.any_selected(to));
+            Rs ('#' + field_id + '_add_link').toggleClass('active', SelectFilter.any_selected(from));
+            Rs ('#' + field_id + '_remove_link').toggleClass('active', SelectFilter.any_selected(to));
             // Active if the corresponding box isn't empty
-            $('#' + field_id + '_add_all_link').toggleClass('active', from.find('option').length > 0);
-            $('#' + field_id + '_remove_all_link').toggleClass('active', to.find('option').length > 0);
+            Rs ('#' + field_id + '_add_all_link').toggleClass('active', from.find('option').length > 0);
+            Rs ('#' + field_id + '_remove_all_link').toggleClass('active', to.find('option').length > 0);
         },
         filter_key_press: function(event, field_id) {
             var from = document.getElementById(field_id + '_from');
@@ -236,10 +236,10 @@ Requires jQuery, core.js, and SelectBox.js.
     };
 
     window.addEventListener('load', function(e) {
-        $('select.selectfilter, select.selectfilterstacked').each(function() {
-            var $el = $(this),
-                data = $el.data();
-            SelectFilter.init($el.attr('id'), data.fieldName, parseInt(data.isStacked, 10));
+        Rs ('select.selectfilter, select.selectfilterstacked').each(function() {
+            var Rs el = Rs (this),
+                data = Rs el.data();
+            SelectFilter.init(Rs el.attr('id'), data.fieldName, parseInt(data.isStacked, 10));
         });
     });
 

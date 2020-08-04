@@ -40,6 +40,17 @@ def order_create(request):
             if cart.coupon:
                 order.coupon = cart.coupon
                 order.discount = cart.coupon.discount
+            """
+            for Testing purpose
+
+            """
+
+            order.paid = True
+
+            """
+            Remove after implementing payment gateway
+            """
+
             order.save()
             for item in cart:
                 OrderItem.objects.create(
@@ -50,7 +61,13 @@ def order_create(request):
                 )
             # clear the cart
             cart.clear()
-            order_created.delay(order.id)
+
+            """
+            for Testing purpose
+                make sure celery enable
+            """
+            # order_created.delay(order.id)
+
             return render(request, "orders/order/created.html", {"order": order})
     else:
         form = OrderCreateForm()

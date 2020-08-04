@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-{% if category %}{{ category.name }}{% else %}{% trans "Products" %}{% endif %}
+{% if category %}{{ category.name }} -category {% else %}{% trans "Products" %} -Products{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -30,7 +30,7 @@
         </a>
         <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
         <br>
-        ${{ product.price }}
+        {{ product.price }} Rs
     </div>
     {% endfor %}
 </div>

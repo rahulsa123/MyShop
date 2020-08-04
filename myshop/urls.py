@@ -19,6 +19,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 
+
+admin.site.site_header = "MyShop Admin Panel"
+admin.site.site_title = "MyShop "
+
 urlpatterns = i18n_patterns(
     path("admin/", admin.site.urls),
     path("cart/", include("cart.urls", namespace="cart")),

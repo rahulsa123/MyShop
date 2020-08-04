@@ -1,7 +1,7 @@
-(function($) {
+(function(Rs ) {
     'use strict';
-    var init = function($element, options) {
-        var settings = $.extend({
+    var init = function(Rs element, options) {
+        var settings = Rs .extend({
             ajax: {
                 data: function(params) {
                     return {
@@ -11,27 +11,27 @@
                 }
             }
         }, options);
-        $element.select2(settings);
+        Rs element.select2(settings);
     };
 
-    $.fn.djangoAdminSelect2 = function(options) {
-        var settings = $.extend({}, options);
-        $.each(this, function(i, element) {
-            var $element = $(element);
-            init($element, settings);
+    Rs .fn.djangoAdminSelect2 = function(options) {
+        var settings = Rs .extend({}, options);
+        Rs .each(this, function(i, element) {
+            var Rs element = Rs (element);
+            init(Rs element, settings);
         });
         return this;
     };
 
-    $(function() {
+    Rs (function() {
         // Initialize all autocomplete widgets except the one in the template
         // form used when a new formset is added.
-        $('.admin-autocomplete').not('[name*=__prefix__]').djangoAdminSelect2();
+        Rs ('.admin-autocomplete').not('[name*=__prefix__]').djangoAdminSelect2();
     });
 
-    $(document).on('formset:added', (function() {
-        return function(event, $newFormset) {
-            return $newFormset.find('.admin-autocomplete').djangoAdminSelect2();
+    Rs (document).on('formset:added', (function() {
+        return function(event, Rs newFormset) {
+            return Rs newFormset.find('.admin-autocomplete').djangoAdminSelect2();
         };
     })(this));
 }(django.jQuery));

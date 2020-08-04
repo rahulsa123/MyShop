@@ -15,17 +15,17 @@
  * Licensed under the New BSD License
  * See: https://opensource.org/licenses/bsd-license.php
  */
-(function($) {
+(function(Rs ) {
     'use strict';
-    $.fn.formset = function(opts) {
-        var options = $.extend({}, $.fn.formset.defaults, opts);
-        var $this = $(this);
-        var $parent = $this.parent();
+    Rs .fn.formset = function(opts) {
+        var options = Rs .extend({}, Rs .fn.formset.defaults, opts);
+        var Rs this = Rs (this);
+        var Rs parent = Rs this.parent();
         var updateElementIndex = function(el, prefix, ndx) {
             var id_regex = new RegExp("(" + prefix + "-(\\d+|__prefix__))");
             var replacement = prefix + "-" + ndx;
-            if ($(el).prop("for")) {
-                $(el).prop("for", $(el).prop("for").replace(id_regex, replacement));
+            if (Rs (el).prop("for")) {
+                Rs (el).prop("for", Rs (el).prop("for").replace(id_regex, replacement));
             }
             if (el.id) {
                 el.id = el.id.replace(id_regex, replacement);
@@ -34,33 +34,33 @@
                 el.name = el.name.replace(id_regex, replacement);
             }
         };
-        var totalForms = $("#id_" + options.prefix + "-TOTAL_FORMS").prop("autocomplete", "off");
+        var totalForms = Rs ("#id_" + options.prefix + "-TOTAL_FORMS").prop("autocomplete", "off");
         var nextIndex = parseInt(totalForms.val(), 10);
-        var maxForms = $("#id_" + options.prefix + "-MAX_NUM_FORMS").prop("autocomplete", "off");
+        var maxForms = Rs ("#id_" + options.prefix + "-MAX_NUM_FORMS").prop("autocomplete", "off");
         // only show the add button if we are allowed to add more items,
         // note that max_num = None translates to a blank string.
         var showAddButton = maxForms.val() === '' || (maxForms.val() - totalForms.val()) > 0;
-        $this.each(function(i) {
-            $(this).not("." + options.emptyCssClass).addClass(options.formCssClass);
+        Rs this.each(function(i) {
+            Rs (this).not("." + options.emptyCssClass).addClass(options.formCssClass);
         });
-        if ($this.length && showAddButton) {
+        if (Rs this.length && showAddButton) {
             var addButton = options.addButton;
             if (addButton === null) {
-                if ($this.prop("tagName") === "TR") {
+                if (Rs this.prop("tagName") === "TR") {
                     // If forms are laid out as table rows, insert the
                     // "add" button in a new table row:
                     var numCols = this.eq(-1).children().length;
-                    $parent.append('<tr class="' + options.addCssClass + '"><td colspan="' + numCols + '"><a href="#">' + options.addText + "</a></tr>");
-                    addButton = $parent.find("tr:last a");
+                    Rs parent.append('<tr class="' + options.addCssClass + '"><td colspan="' + numCols + '"><a href="#">' + options.addText + "</a></tr>");
+                    addButton = Rs parent.find("tr:last a");
                 } else {
                     // Otherwise, insert it immediately after the last form:
-                    $this.filter(":last").after('<div class="' + options.addCssClass + '"><a href="#">' + options.addText + "</a></div>");
-                    addButton = $this.filter(":last").next().find("a");
+                    Rs this.filter(":last").after('<div class="' + options.addCssClass + '"><a href="#">' + options.addText + "</a></div>");
+                    addButton = Rs this.filter(":last").next().find("a");
                 }
             }
             addButton.on('click', function(e) {
                 e.preventDefault();
-                var template = $("#" + options.prefix + "-empty");
+                var template = Rs ("#" + options.prefix + "-empty");
                 var row = template.clone(true);
                 row.removeClass(options.emptyCssClass)
                     .addClass(options.formCssClass)
@@ -82,9 +82,9 @@
                     updateElementIndex(this, options.prefix, totalForms.val());
                 });
                 // Insert the new form when it has been fully edited
-                row.insertBefore($(template));
+                row.insertBefore(Rs (template));
                 // Update number of total forms
-                $(totalForms).val(parseInt(totalForms.val(), 10) + 1);
+                Rs (totalForms).val(parseInt(totalForms.val(), 10) + 1);
                 nextIndex += 1;
                 // Hide add button in case we've hit the max, except we want to add infinitely
                 if ((maxForms.val() !== '') && (maxForms.val() - totalForms.val()) <= 0) {
@@ -100,10 +100,10 @@
                     if (options.removed) {
                         options.removed(row);
                     }
-                    $(document).trigger('formset:removed', [row, options.prefix]);
+                    Rs (document).trigger('formset:removed', [row, options.prefix]);
                     // Update the TOTAL_FORMS form count.
-                    var forms = $("." + options.formCssClass);
-                    $("#id_" + options.prefix + "-TOTAL_FORMS").val(forms.length);
+                    var forms = Rs ("." + options.formCssClass);
+                    Rs ("#id_" + options.prefix + "-TOTAL_FORMS").val(forms.length);
                     // Show add button again once we drop below max
                     if ((maxForms.val() === '') || (maxForms.val() - forms.length) > 0) {
                         addButton.parent().show();
@@ -115,22 +115,22 @@
                         updateElementIndex(this, options.prefix, i);
                     };
                     for (i = 0, formCount = forms.length; i < formCount; i++) {
-                        updateElementIndex($(forms).get(i), options.prefix, i);
-                        $(forms.get(i)).find("*").each(updateElementCallback);
+                        updateElementIndex(Rs (forms).get(i), options.prefix, i);
+                        Rs (forms.get(i)).find("*").each(updateElementCallback);
                     }
                 });
                 // If a post-add callback was supplied, call it with the added form:
                 if (options.added) {
                     options.added(row);
                 }
-                $(document).trigger('formset:added', [row, options.prefix]);
+                Rs (document).trigger('formset:added', [row, options.prefix]);
             });
         }
         return this;
     };
 
     /* Setup plugin defaults */
-    $.fn.formset.defaults = {
+    Rs .fn.formset.defaults = {
         prefix: "form", // The form prefix for your django formset
         addText: "add another", // Text for the add link
         deleteText: "remove", // Text for the delete link
@@ -145,10 +145,10 @@
 
 
     // Tabular inlines ---------------------------------------------------------
-    $.fn.tabularFormset = function(selector, options) {
-        var $rows = $(this);
+    Rs .fn.tabularFormset = function(selector, options) {
+        var Rs rows = Rs (this);
         var alternatingRows = function(row) {
-            $(selector).not(".add-row").removeClass("row1 row2")
+            Rs (selector).not(".add-row").removeClass("row1 row2")
                 .filter(":even").addClass("row1").end()
                 .filter(":odd").addClass("row2");
         };
@@ -156,7 +156,7 @@
         var reinitDateTimeShortCuts = function() {
             // Reinitialize the calendar and clock widgets by force
             if (typeof DateTimeShortcuts !== "undefined") {
-                $(".datetimeshortcuts").remove();
+                Rs (".datetimeshortcuts").remove();
                 DateTimeShortcuts.init();
             }
         };
@@ -165,11 +165,11 @@
             // If any SelectFilter widgets are a part of the new form,
             // instantiate a new SelectFilter instance for it.
             if (typeof SelectFilter !== 'undefined') {
-                $('.selectfilter').each(function(index, value) {
+                Rs ('.selectfilter').each(function(index, value) {
                     var namearr = value.name.split('-');
                     SelectFilter.init(value.id, namearr[namearr.length - 1], false);
                 });
-                $('.selectfilterstacked').each(function(index, value) {
+                Rs ('.selectfilterstacked').each(function(index, value) {
                     var namearr = value.name.split('-');
                     SelectFilter.init(value.id, namearr[namearr.length - 1], true);
                 });
@@ -178,11 +178,11 @@
 
         var initPrepopulatedFields = function(row) {
             row.find('.prepopulated_field').each(function() {
-                var field = $(this),
+                var field = Rs (this),
                     input = field.find('input, select, textarea'),
                     dependency_list = input.data('dependency_list') || [],
                     dependencies = [];
-                $.each(dependency_list, function(i, field_name) {
+                Rs .each(dependency_list, function(i, field_name) {
                     dependencies.push('#' + row.find('.field-' + field_name).find('input, select, textarea').attr('id'));
                 });
                 if (dependencies.length) {
@@ -191,7 +191,7 @@
             });
         };
 
-        $rows.formset({
+        Rs rows.formset({
             prefix: options.prefix,
             addText: options.addText,
             formCssClass: "dynamic-" + options.prefix,
@@ -208,23 +208,23 @@
             addButton: options.addButton
         });
 
-        return $rows;
+        return Rs rows;
     };
 
     // Stacked inlines ---------------------------------------------------------
-    $.fn.stackedFormset = function(selector, options) {
-        var $rows = $(this);
+    Rs .fn.stackedFormset = function(selector, options) {
+        var Rs rows = Rs (this);
         var updateInlineLabel = function(row) {
-            $(selector).find(".inline_label").each(function(i) {
+            Rs (selector).find(".inline_label").each(function(i) {
                 var count = i + 1;
-                $(this).html($(this).html().replace(/(#\d+)/g, "#" + count));
+                Rs (this).html(Rs (this).html().replace(/(#\d+)/g, "#" + count));
             });
         };
 
         var reinitDateTimeShortCuts = function() {
             // Reinitialize the calendar and clock widgets by force, yuck.
             if (typeof DateTimeShortcuts !== "undefined") {
-                $(".datetimeshortcuts").remove();
+                Rs (".datetimeshortcuts").remove();
                 DateTimeShortcuts.init();
             }
         };
@@ -232,11 +232,11 @@
         var updateSelectFilter = function() {
             // If any SelectFilter widgets were added, instantiate a new instance.
             if (typeof SelectFilter !== "undefined") {
-                $(".selectfilter").each(function(index, value) {
+                Rs (".selectfilter").each(function(index, value) {
                     var namearr = value.name.split('-');
                     SelectFilter.init(value.id, namearr[namearr.length - 1], false);
                 });
-                $(".selectfilterstacked").each(function(index, value) {
+                Rs (".selectfilterstacked").each(function(index, value) {
                     var namearr = value.name.split('-');
                     SelectFilter.init(value.id, namearr[namearr.length - 1], true);
                 });
@@ -245,11 +245,11 @@
 
         var initPrepopulatedFields = function(row) {
             row.find('.prepopulated_field').each(function() {
-                var field = $(this),
+                var field = Rs (this),
                     input = field.find('input, select, textarea'),
                     dependency_list = input.data('dependency_list') || [],
                     dependencies = [];
-                $.each(dependency_list, function(i, field_name) {
+                Rs .each(dependency_list, function(i, field_name) {
                     dependencies.push('#' + row.find('.form-row .field-' + field_name).find('input, select, textarea').attr('id'));
                 });
                 if (dependencies.length) {
@@ -258,7 +258,7 @@
             });
         };
 
-        $rows.formset({
+        Rs rows.formset({
             prefix: options.prefix,
             addText: options.addText,
             formCssClass: "dynamic-" + options.prefix,
@@ -275,22 +275,22 @@
             addButton: options.addButton
         });
 
-        return $rows;
+        return Rs rows;
     };
 
-    $(document).ready(function() {
-        $(".js-inline-admin-formset").each(function() {
-            var data = $(this).data(),
+    Rs (document).ready(function() {
+        Rs (".js-inline-admin-formset").each(function() {
+            var data = Rs (this).data(),
                 inlineOptions = data.inlineFormset,
                 selector;
             switch(data.inlineType) {
             case "stacked":
                 selector = inlineOptions.name + "-group .inline-related";
-                $(selector).stackedFormset(selector, inlineOptions.options);
+                Rs (selector).stackedFormset(selector, inlineOptions.options);
                 break;
             case "tabular":
                 selector = inlineOptions.name + "-group .tabular.inline-related tbody:first > tr";
-                $(selector).tabularFormset(selector, inlineOptions.options);
+                Rs (selector).tabularFormset(selector, inlineOptions.options);
                 break;
             }
         });

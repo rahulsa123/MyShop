@@ -67,7 +67,7 @@ XRegExp = XRegExp || (function (undef) {
         },
 
 // Any backreference in replacement strings
-        replacementToken = /\$(?:{([\w$]+)}|(\d\d?|[\s\S]))/g,
+        replacementToken = /\Rs (?:{([\wRs ]+)}|(\d\d?|[\s\S]))/g,
 
 // Any character with a later instance in the string
         duplicateFlags = /([\s\S])(?=[\s\S]*\1)/g,
@@ -118,7 +118,7 @@ XRegExp = XRegExp || (function (undef) {
  * @returns {String} Native flags in use.
  */
     function getNativeFlags(regex) {
-        //return nativ.exec.call(/\/([a-z]*)$/i, String(regex))[1];
+        //return nativ.exec.call(/\/([a-z]*)Rs /i, String(regex))[1];
         return (regex.global     ? "g" : "") +
                (regex.ignoreCase ? "i" : "") +
                (regex.multiline  ? "m" : "") +
@@ -337,11 +337,11 @@ XRegExp = XRegExp || (function (undef) {
             throw new SyntaxError("invalid duplicate regular expression flag");
         }
         // Strip/apply leading mode modifier with any combination of flags except g or y: (?imnsx)
-        pattern = nativ.replace.call(pattern, /^\(\?([\w$]+)\)/, function ($0, $1) {
-            if (nativ.test.call(/[gy]/, $1)) {
+        pattern = nativ.replace.call(pattern, /^\(\?([\wRs ]+)\)/, function (Rs 0, Rs 1) {
+            if (nativ.test.call(/[gy]/, Rs 1)) {
                 throw new SyntaxError("can't use flag g or y in mode modifier");
             }
-            flags = nativ.replace.call(flags + $1, duplicateFlags, "");
+            flags = nativ.replace.call(flags + Rs 1, duplicateFlags, "");
             return "";
         });
         self.forEach(flags, /[\s\S]/, function (m) {
@@ -469,7 +469,7 @@ XRegExp = XRegExp || (function (undef) {
  * // -> 'Escaped\?\ <\.>'
  */
     self.escape = function (str) {
-        return nativ.replace.call(str, /[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+        return nativ.replace.call(str, /[-[\]{}()*+?.,\\^Rs |#\s]/g, "\\Rs &");
     };
 
 /**
@@ -673,7 +673,7 @@ XRegExp = XRegExp || (function (undef) {
  * Returns a new string with one or all matches of a pattern replaced. The pattern can be a string
  * or regex, and the replacement can be a string or a function to be called for each match. To
  * perform a global search and replace, use the optional `scope` argument or include flag `g` if
- * using a regex. Replacement strings can use `${n}` for named and numbered backreferences.
+ * using a regex. Replacement strings can use `Rs {n}` for named and numbered backreferences.
  * Replacement functions can use named backreferences via `arguments[0].name`. Also fixes browser
  * bugs compared to the native `String.prototype.replace` and can be used reliably cross-browser.
  * @memberOf XRegExp
@@ -681,18 +681,18 @@ XRegExp = XRegExp || (function (undef) {
  * @param {RegExp|String} search Search pattern to be replaced.
  * @param {String|Function} replacement Replacement string or a function invoked to create it.
  *   Replacement strings can include special replacement syntax:
- *     <li>$$ - Inserts a literal '$'.
- *     <li>$&, $0 - Inserts the matched substring.
- *     <li>$` - Inserts the string that precedes the matched substring (left context).
- *     <li>$' - Inserts the string that follows the matched substring (right context).
- *     <li>$n, $nn - Where n/nn are digits referencing an existent capturing group, inserts
+ *     <li>Rs Rs  - Inserts a literal 'Rs '.
+ *     <li>Rs &, Rs 0 - Inserts the matched substring.
+ *     <li>Rs ` - Inserts the string that precedes the matched substring (left context).
+ *     <li>Rs ' - Inserts the string that follows the matched substring (right context).
+ *     <li>Rs n, Rs nn - Where n/nn are digits referencing an existent capturing group, inserts
  *       backreference n/nn.
- *     <li>${n} - Where n is a name or any number of digits that reference an existent capturing
+ *     <li>Rs {n} - Where n is a name or any number of digits that reference an existent capturing
  *       group, inserts backreference n.
  *   Replacement functions are invoked with three or more arguments:
- *     <li>The matched substring (corresponds to $& above). Named backreferences are accessible as
+ *     <li>The matched substring (corresponds to Rs & above). Named backreferences are accessible as
  *       properties of this first argument.
- *     <li>0..n arguments, one for each backreference (corresponding to $1, $2, etc. above).
+ *     <li>0..n arguments, one for each backreference (corresponding to Rs 1, Rs 2, etc. above).
  *     <li>The zero-based index of the match within the total search string.
  *     <li>The total string being searched.
  * @param {String} [scope='one'] Use 'one' to replace the first match only, or 'all'. If not
@@ -702,7 +702,7 @@ XRegExp = XRegExp || (function (undef) {
  *
  * // Regex search, using named backreferences in replacement string
  * var name = XRegExp('(?<first>\\w+) (?<last>\\w+)');
- * XRegExp.replace('John Smith', name, '${last}, ${first}');
+ * XRegExp.replace('John Smith', name, 'Rs {last}, Rs {first}');
  * // -> 'Smith, John'
  *
  * // Regex search, using named backreferences in replacement function
@@ -971,7 +971,7 @@ XRegExp = XRegExp || (function (undef) {
     };
 
 /**
- * Adds support for `${n}` tokens for named and numbered backreferences in replacement text, and
+ * Adds support for `Rs {n}` tokens for named and numbered backreferences in replacement text, and
  * provides named backreferences to replacement functions as `arguments[0].name`. Also fixes
  * browser bugs in replacement text syntax when performing a replacement using a nonregex search
  * value, and the value of a replacement regex's `lastIndex` property during replacement iterations
@@ -1019,52 +1019,52 @@ XRegExp = XRegExp || (function (undef) {
             str = String(this); // Ensure `args[args.length - 1]` will be a string when given nonstring `this`
             result = nativ.replace.call(str, search, function () {
                 var args = arguments; // Keep this function's `arguments` available through closure
-                return nativ.replace.call(String(replacement), replacementToken, function ($0, $1, $2) {
+                return nativ.replace.call(String(replacement), replacementToken, function (Rs 0, Rs 1, Rs 2) {
                     var n;
                     // Named or numbered backreference with curly brackets
-                    if ($1) {
-                        /* XRegExp behavior for `${n}`:
+                    if (Rs 1) {
+                        /* XRegExp behavior for `Rs {n}`:
                          * 1. Backreference to numbered capture, where `n` is 1+ digits. `0`, `00`, etc. is the entire match.
                          * 2. Backreference to named capture `n`, if it exists and is not a number overridden by numbered capture.
                          * 3. Otherwise, it's an error.
                          */
-                        n = +$1; // Type-convert; drop leading zeros
+                        n = +Rs 1; // Type-convert; drop leading zeros
                         if (n <= args.length - 3) {
                             return args[n] || "";
                         }
-                        n = captureNames ? lastIndexOf(captureNames, $1) : -1;
+                        n = captureNames ? lastIndexOf(captureNames, Rs 1) : -1;
                         if (n < 0) {
-                            throw new SyntaxError("backreference to undefined group " + $0);
+                            throw new SyntaxError("backreference to undefined group " + Rs 0);
                         }
                         return args[n + 1] || "";
                     }
                     // Else, special variable or numbered backreference (without curly brackets)
-                    if ($2 === "$") return "$";
-                    if ($2 === "&" || +$2 === 0) return args[0]; // $&, $0 (not followed by 1-9), $00
-                    if ($2 === "`") return args[args.length - 1].slice(0, args[args.length - 2]);
-                    if ($2 === "'") return args[args.length - 1].slice(args[args.length - 2] + args[0].length);
+                    if (Rs 2 === "Rs ") return "Rs ";
+                    if (Rs 2 === "&" || +Rs 2 === 0) return args[0]; // Rs &, Rs 0 (not followed by 1-9), Rs 00
+                    if (Rs 2 === "`") return args[args.length - 1].slice(0, args[args.length - 2]);
+                    if (Rs 2 === "'") return args[args.length - 1].slice(args[args.length - 2] + args[0].length);
                     // Else, numbered backreference (without curly brackets)
-                    $2 = +$2; // Type-convert; drop leading zero
+                    Rs 2 = +Rs 2; // Type-convert; drop leading zero
                     /* XRegExp behavior:
-                     * - Backreferences without curly brackets end after 1 or 2 digits. Use `${..}` for more digits.
-                     * - `$1` is an error if there are no capturing groups.
-                     * - `$10` is an error if there are less than 10 capturing groups. Use `${1}0` instead.
-                     * - `$01` is equivalent to `$1` if a capturing group exists, otherwise it's an error.
-                     * - `$0` (not followed by 1-9), `$00`, and `$&` are the entire match.
+                     * - Backreferences without curly brackets end after 1 or 2 digits. Use `Rs {..}` for more digits.
+                     * - `Rs 1` is an error if there are no capturing groups.
+                     * - `Rs 10` is an error if there are less than 10 capturing groups. Use `Rs {1}0` instead.
+                     * - `Rs 01` is equivalent to `Rs 1` if a capturing group exists, otherwise it's an error.
+                     * - `Rs 0` (not followed by 1-9), `Rs 00`, and `Rs &` are the entire match.
                      * Native behavior, for comparison:
                      * - Backreferences end after 1 or 2 digits. Cannot use backreference to capturing group 100+.
-                     * - `$1` is a literal `$1` if there are no capturing groups.
-                     * - `$10` is `$1` followed by a literal `0` if there are less than 10 capturing groups.
-                     * - `$01` is equivalent to `$1` if a capturing group exists, otherwise it's a literal `$01`.
-                     * - `$0` is a literal `$0`. `$&` is the entire match.
+                     * - `Rs 1` is a literal `Rs 1` if there are no capturing groups.
+                     * - `Rs 10` is `Rs 1` followed by a literal `0` if there are less than 10 capturing groups.
+                     * - `Rs 01` is equivalent to `Rs 1` if a capturing group exists, otherwise it's a literal `Rs 01`.
+                     * - `Rs 0` is a literal `Rs 0`. `Rs &` is the entire match.
                      */
-                    if (!isNaN($2)) {
-                        if ($2 > args.length - 3) {
-                            throw new SyntaxError("backreference to undefined group " + $0);
+                    if (!isNaN(Rs 2)) {
+                        if (Rs 2 > args.length - 3) {
+                            throw new SyntaxError("backreference to undefined group " + Rs 0);
                         }
-                        return args[$2] || "";
+                        return args[Rs 2] || "";
                     }
-                    throw new SyntaxError("invalid token " + $0);
+                    throw new SyntaxError("invalid token " + Rs 0);
                 });
             });
         }
@@ -1166,9 +1166,9 @@ XRegExp = XRegExp || (function (undef) {
         });
 
 /* Named backreference: \k<name>
- * Backreference names can use the characters A-Z, a-z, 0-9, _, and $ only.
+ * Backreference names can use the characters A-Z, a-z, 0-9, _, and Rs  only.
  */
-    add(/\\k<([\w$]+)>/,
+    add(/\\k<([\wRs ]+)>/,
         function (match) {
             var index = isNaN(match[1]) ? (lastIndexOf(this.captureNames, match[1]) + 1) : +match[1],
                 endIndex = match.index + match[0].length;
@@ -1209,12 +1209,12 @@ XRegExp = XRegExp || (function (undef) {
         });
 
 /* Named capturing group; match the opening delimiter only: (?<name>
- * Capture names can use the characters A-Z, a-z, 0-9, _, and $ only. Names can't be integers.
+ * Capture names can use the characters A-Z, a-z, 0-9, _, and Rs  only. Names can't be integers.
  * Supports Python-style (?P<name> as an alternate syntax to avoid issues in recent Opera (which
  * natively supports the Python-style syntax). Otherwise, XRegExp might treat numbered
  * backreferences to Python-style named capture as octals.
  */
-    add(/\(\?P?<([\w$]+)>/,
+    add(/\(\?P?<([\wRs ]+)>/,
         function (match) {
             if (!isNaN(match[1])) {
                 // Avoid incorrect lookups, since named backreferences are added to match arrays
@@ -1299,7 +1299,7 @@ XRegExp = XRegExp || (function (undef) {
 
 // Expands a list of Unicode code points and ranges to be usable in a regex character class
     function expand(str) {
-        return str.replace(/\w{4}/g, "\\u$&");
+        return str.replace(/\w{4}/g, "\\uRs &");
     }
 
 // Adds leading zeros if shorter than four characters
@@ -2053,18 +2053,18 @@ XRegExp = XRegExp || (function (undef) {
     "use strict";
 
     var subparts = /(\()(?!\?)|\\([1-9]\d*)|\\[\s\S]|\[(?:[^\\\]]|\\[\s\S])*]/g,
-        parts = XRegExp.union([/\({{([\w$]+)}}\)|{{([\w$]+)}}/, subparts], "g");
+        parts = XRegExp.union([/\({{([\wRs ]+)}}\)|{{([\wRs ]+)}}/, subparts], "g");
 
 /**
- * Strips a leading `^` and trailing unescaped `$`, if both are present.
+ * Strips a leading `^` and trailing unescaped `Rs `, if both are present.
  * @private
  * @param {String} pattern Pattern to process.
  * @returns {String} Pattern with edge anchors removed.
  */
     function deanchor(pattern) {
         var startAnchor = /^(?:\(\?:\))?\^/, // Leading `^` or `(?:)^` (handles /x cruft)
-            endAnchor = /\$(?:\(\?:\))?$/; // Trailing `$` or `$(?:)` (handles /x cruft)
-        if (endAnchor.test(pattern.replace(/\\[\s\S]/g, ""))) { // Ensure trailing `$` isn't escaped
+            endAnchor = /\Rs (?:\(\?:\))?Rs /; // Trailing `Rs ` or `Rs (?:)` (handles /x cruft)
+        if (endAnchor.test(pattern.replace(/\\[\s\S]/g, ""))) { // Ensure trailing `Rs ` isn't escaped
             return pattern.replace(startAnchor, "").replace(endAnchor, "");
         }
         return pattern;
@@ -2091,23 +2091,23 @@ XRegExp = XRegExp || (function (undef) {
  *   `({{name}})` as shorthand for `(?<name>{{name}})`. Patterns cannot be embedded within
  *   character classes.
  * @param {Object} subs Lookup object for named subpatterns. Values can be strings or regexes. A
- *   leading `^` and trailing unescaped `$` are stripped from subpatterns, if both are present.
+ *   leading `^` and trailing unescaped `Rs ` are stripped from subpatterns, if both are present.
  * @param {String} [flags] Any combination of XRegExp flags.
  * @returns {RegExp} Regex with interpolated subpatterns.
  * @example
  *
- * var time = XRegExp.build('(?x)^ {{hours}} ({{minutes}}) $', {
+ * var time = XRegExp.build('(?x)^ {{hours}} ({{minutes}}) Rs ', {
  *   hours: XRegExp.build('{{h12}} : | {{h24}}', {
  *     h12: /1[0-2]|0?[1-9]/,
  *     h24: /2[0-3]|[01][0-9]/
  *   }, 'x'),
- *   minutes: /^[0-5][0-9]$/
+ *   minutes: /^[0-5][0-9]Rs /
  * });
  * time.test('10:59'); // -> true
  * XRegExp.exec('10:59', time).minutes; // -> '59'
  */
     XRegExp.build = function (pattern, subs, flags) {
-        var inlineFlags = /^\(\?([\w$]+)\)/.exec(pattern),
+        var inlineFlags = /^\(\?([\wRs ]+)\)/.exec(pattern),
             data = {},
             numCaps = 0, // Caps is short for captures
             numPriorCaps,
@@ -2133,7 +2133,7 @@ XRegExp = XRegExp || (function (undef) {
                 // octals and adds the `xregexp` property, for simplicity
                 sub = asXRegExp(subs[p]);
                 // Deanchoring allows embedding independently useful anchored regexes. If you
-                // really need to keep your anchors, double them (i.e., `^^...$$`)
+                // really need to keep your anchors, double them (i.e., `^^...Rs Rs `)
                 data[p] = {pattern: deanchor(sub.source), names: sub.xregexp.captureNames || []};
             }
         }
@@ -2142,13 +2142,13 @@ XRegExp = XRegExp || (function (undef) {
         // helps keep this simple. Named captures will be put back
         pattern = asXRegExp(pattern);
         outerCapNames = pattern.xregexp.captureNames || [];
-        pattern = pattern.source.replace(parts, function ($0, $1, $2, $3, $4) {
-            var subName = $1 || $2, capName, intro;
+        pattern = pattern.source.replace(parts, function (Rs 0, Rs 1, Rs 2, Rs 3, Rs 4) {
+            var subName = Rs 1 || Rs 2, capName, intro;
             if (subName) { // Named subpattern
                 if (!data.hasOwnProperty(subName)) {
-                    throw new ReferenceError("undefined property " + $0);
+                    throw new ReferenceError("undefined property " + Rs 0);
                 }
-                if ($1) { // Named subpattern was wrapped in a capturing group
+                if (Rs 1) { // Named subpattern was wrapped in a capturing group
                     capName = outerCapNames[numOuterCaps];
                     outerCapsMap[++numOuterCaps] = ++numCaps;
                     // If it's a named group, preserve the name. Otherwise, use the subpattern name
@@ -2171,16 +2171,16 @@ XRegExp = XRegExp || (function (undef) {
                     return match;
                 }) + ")";
             }
-            if ($3) { // Capturing group
+            if (Rs 3) { // Capturing group
                 capName = outerCapNames[numOuterCaps];
                 outerCapsMap[++numOuterCaps] = ++numCaps;
                 if (capName) { // If the current capture has a name, preserve the name
                     return "(?<" + capName + ">";
                 }
-            } else if ($4) { // Backreference
-                return "\\" + outerCapsMap[+$4]; // Rewrite the backreference
+            } else if (Rs 4) { // Backreference
+                return "\\" + outerCapsMap[+Rs 4]; // Rewrite the backreference
             }
-            return $0;
+            return Rs 0;
         });
 
         return XRegExp(pattern, flags);
