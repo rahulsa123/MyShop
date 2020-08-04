@@ -16,4 +16,4 @@
 
 ### HomePage
 
-<p><img src="/paid_pdf.png" alt="ss"/></p>
+![](./readme_files/coupon.png)
