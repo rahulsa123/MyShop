@@ -12,7 +12,23 @@
 * WeasyPrint for PDF genration.
         
 ### this application is avaliable in two language English and hindi
-### 
+### Installation
+* make virtual environment and activate virctual environment 
+  ```bash
+  $ python3 -m venv myshop_venv
+  $ source myshop_venv/bin/activate
+  ```
+* clone respositry
+  ```bash
+  $(myshop_venv) git clone https://github.com/rahulsa123/MyShop.git
+  $(myshop_venv) cd MyShop
+  ```
+* Install dependencies
+  ```bash
+  $(myshop_venv) pip3 install -r requirements.txt
+  $(myshop_venv) ./manage.py runserver
+  ```
+
 ## Screenshot
 
 ### HomePage
