@@ -23,7 +23,7 @@
   $(myshop_venv) git clone https://github.com/rahulsa123/MyShop.git
   $(myshop_venv) cd MyShop
   ```
-* Install dependencies
+* Install dependencies and run server
   ```bash
   $(myshop_venv) pip3 install -r requirements.txt
   $(myshop_venv) ./manage.py makemigrations
