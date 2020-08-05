@@ -26,6 +26,9 @@
 * Install dependencies
   ```bash
   $(myshop_venv) pip3 install -r requirements.txt
+  $(myshop_venv) ./manage.py makemigrations
+  $(myshop_venv) ./manage.py migrate
+  $(myshop_venv) ./manage.py createsuperuser # for admin page
   $(myshop_venv) ./manage.py runserver
   ```
 
