@@ -11,7 +11,7 @@
 * parler for model translation.
 * WeasyPrint for PDF genration.
         
-### this application is avaliable in two language English and hindi
+### this application is available in two language English and hindi
 ### Installation
 * make virtual environment and activate virctual environment 
   ```bash
